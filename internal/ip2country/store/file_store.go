@@ -10,5 +10,5 @@ func NewFileStore() *FileStore {
 }
 
 func (r *FileStore) GetCountryByIP(ip string) (string, error) {
-	return "", errors.New("Not implemented")
+	return "", errors.New("not implemented")
 }

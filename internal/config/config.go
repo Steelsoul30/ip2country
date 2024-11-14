@@ -80,7 +80,7 @@ func PrintConfigToLog(cfg interface{}, prefix string) {
 		return
 	}
 	num := fields.NumField()
-	for i := 0; i < num; i++ {
+	for i := range num {
 		value := values.Field(i)
 		field := fields.Field(i)
 		printSingle(value, prefix, field.Name)
@@ -97,7 +97,7 @@ func printSingle(value reflect.Value, prefix, fieldName string) {
 			slog.Info(fmt.Sprintf("%s[%s] = [nil]", configLogPrefix, prefix+fieldName))
 		}
 	case reflect.Slice:
-		for i := 0; i < value.Len(); i++ {
+		for i := range value.Len() {
 			PrintConfigToLog(value.Index(i).Interface(), sprintfConfigSliceElement(prefix, fieldName, i))
 		}
 	case reflect.Struct:

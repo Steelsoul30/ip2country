@@ -10,10 +10,6 @@ import (
 	"ip2country/internal/config"
 )
 
-const (
-	timeFieldFormat = time.RFC3339
-)
-
 func InitLogger(cnf *config.Config) {
 	options := &slog.HandlerOptions{
 		Level: slog.LevelInfo,

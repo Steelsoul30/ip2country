@@ -10,5 +10,5 @@ func NewDBStore() *DBStore {
 }
 
 func (r *DBStore) GetCountryByIP(ip string) (string, error) {
-	return "", errors.New("Not implemented")
+	return "", errors.New("not implemented")
 }

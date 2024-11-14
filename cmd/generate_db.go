@@ -32,6 +32,7 @@ var createCmd = &cobra.Command{
 		slog.Info(fmt.Sprintf("The file %s exists.\n", absPath))
 		dbGen := dbgenerator.NewDbGenerator()
 		files, err := dbGen.UnzipToMemory(absPath)
+		_ = err
 		_ = files
 	},
 }
