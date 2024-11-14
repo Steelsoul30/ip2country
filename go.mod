@@ -3,6 +3,7 @@ module ip2country
 go 1.23.0
 
 require (
+	github.com/lmittmann/tint v1.0.5
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 )
