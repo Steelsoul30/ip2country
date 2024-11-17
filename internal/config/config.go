@@ -11,29 +11,40 @@ import (
 	"github.com/spf13/viper"
 )
 
+type DatabaseType string
+
 const (
-	defaultLogLevel        = "info"
-	defaultServiceName     = "ip2country"
-	defaultServiceVersion  = "0.0.1"
-	defaultActiveDataStore = "local"
-	logLevel               = "LOG_LEVEL"
-	serviceName            = "SERVICE_NAME"
-	serviceVersion         = "SERVICE_VERSION"
-	activeDataStore        = "ACTIVE_DATA_STORE"
-	isDebug                = "IP2COUNTRY_DEBUG"
-	configLogPrefix        = "[Config]"
+	defaultLogLevel                     = "info"
+	defaultServiceName                  = "ip2country"
+	defaultServiceVersion               = "0.0.1"
+	defaultActiveDataStore              = Local
+	logLevel                            = "LOG_LEVEL"
+	serviceName                         = "SERVICE_NAME"
+	serviceVersion                      = "SERVICE_VERSION"
+	activeDataStore                     = "ACTIVE_DATA_STORE"
+	isDebug                             = "IP2COUNTRY_DEBUG"
+	port                                = "PORT"
+	rateLimit                           = "RATE_LIMIT"
+	burstLimit                          = "BURST_LIMIT"
+	configLogPrefix                     = "[Config]"
+	Local                  DatabaseType = "local"
+	API                    DatabaseType = "api"
+	Relational             DatabaseType = "some_relational_db"
 )
 
 type Config struct {
 	DB              []dbConfig
 	Logger          loggerConfig
-	ActiveDataStore string
+	ActiveDataStore DatabaseType `mapstructure:"ACTIVE_DATA_STORE"`
+	RateLimit       int          `mapstructure:"RATE_LIMIT"`
+	BurstLimit      int          `mapstructure:"BURST_LIMIT"`
+	Port            int
 	IsDebug         bool
 }
 
 type dbConfig struct {
 	Host string
-	Name string
+	Name DatabaseType
 }
 
 type loggerConfig struct {
@@ -43,27 +54,47 @@ type loggerConfig struct {
 }
 
 func LoadConfig() (*Config, error) {
+	viper.SetConfigName("config") // name of config file (without extension)
+	viper.SetConfigType("yaml")   // or viper.SetConfigType("YAML")
+	viper.AddConfigPath(".")      // optionally look for config in the working directory
 	viper.SetDefault(logLevel, defaultLogLevel)
 	viper.SetDefault(serviceName, defaultServiceName)
 	viper.SetDefault(serviceVersion, defaultServiceVersion)
-	viper.SetDefault(activeDataStore, defaultActiveDataStore)
+	viper.SetDefault(activeDataStore, string(defaultActiveDataStore))
+	viper.SetDefault(port, 8080)
 	viper.SetDefault(isDebug, false)
-	viper.AutomaticEnv()
+	viper.SetDefault(rateLimit, 1)
+	viper.SetDefault(burstLimit, 5)
+	//viper.AutomaticEnv()
 
-	return &Config{
-		ActiveDataStore: viper.GetString(activeDataStore),
-		IsDebug:         viper.GetBool(isDebug),
-		DB: []dbConfig{
-			{Host: "",
-				Name: defaultActiveDataStore,
-			},
-		},
-		Logger: loggerConfig{
-			Level:          viper.GetString(logLevel),
-			ServiceName:    viper.GetString(serviceName),
-			ServiceVersion: viper.GetString(serviceVersion),
-		},
-	}, nil
+	// If a config file is found, read it in
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("error reading config file: %w", err)
+	}
+
+	viper.AutomaticEnv() // read in environment variables that match
+	var cfg Config
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return nil, fmt.Errorf("unable to decode into struct: %w", err)
+	}
+
+	return &cfg, nil
+
+	//return &Config{
+	//	ActiveDataStore: DatabaseType(viper.GetString(activeDataStore)),
+	//	IsDebug:         viper.GetBool(isDebug),
+	//	DB: []dbConfig{
+	//		{
+	//			Host: "db/geolite2.zip",
+	//			Name: defaultActiveDataStore,
+	//		},
+	//	},
+	//	Logger: loggerConfig{
+	//		Level:          viper.GetString(logLevel),
+	//		ServiceName:    viper.GetString(serviceName),
+	//		ServiceVersion: viper.GetString(serviceVersion),
+	//	},
+	//}, nil
 }
 
 func PrintConfigToLog(cfg interface{}, prefix string) {

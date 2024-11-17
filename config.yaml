@@ -1,0 +1,18 @@
+# config.yaml
+
+db:
+  - host: "db/geolite2.zip"
+    name: "local"
+  - host: "https://tools.keycdn.com/geo.json?host"
+    name: "api"
+
+logger:
+  level: "info"
+  serviceName: "ip2country"
+  serviceVersion: "0.0.1"
+
+activeDataStore: "local"
+RATE_LIMIT: 1
+BURST_LIMIT: 1
+port: 8080
+isDebug: false

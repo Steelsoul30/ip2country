@@ -3,9 +3,12 @@ module ip2country
 go 1.23.0
 
 require (
+	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
+	github.com/gorilla/mux v1.8.1
 	github.com/lmittmann/tint v1.0.5
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
+	github.com/yl2chen/cidranger v1.0.2
 )
 
 require (

@@ -18,7 +18,7 @@ var createCmd = &cobra.Command{
 	Long:    "Generate database to serialize the database schema to a file in preparation for runtime use.",
 	Run: func(cmd *cobra.Command, args []string) {
 		path, _ := cmd.Flags().GetString("zippath")
-		fmt.Printf("Creating database...\n flag is %s", path)
+		slog.Info(fmt.Sprintf("Creating database...\n flag is %s\n", path))
 		absPath, err := filepath.Abs(path)
 		if err != nil {
 			slog.Error(fmt.Sprintf("Failed to get absolute path from path %s: %v\n", path, err))
@@ -29,11 +29,19 @@ var createCmd = &cobra.Command{
 			return
 		}
 
-		slog.Info(fmt.Sprintf("The file %s exists.\n", absPath))
+		slog.Info(fmt.Sprintf("Creating database from zip file %s\n", absPath))
 		dbGen := dbgenerator.NewDbGenerator()
-		files, err := dbGen.UnzipToMemory(absPath)
-		_ = err
-		_ = files
+		_, err = dbGen.DirectFromZip(absPath)
+		if err != nil {
+			slog.Error(fmt.Sprintf("Error creating database: %v\n", err))
+			return
+		}
+		err = dbGen.SaveInfo(filepath.Dir(absPath) + "/geodata.dat")
+		if err != nil {
+			slog.Error(fmt.Sprintf("Error saving database: %v\n", err))
+			return
+		}
+		slog.Info("Database created successfully")
 	},
 }
 

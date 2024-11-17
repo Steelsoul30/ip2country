@@ -1,6 +1,11 @@
 package store
 
-import "errors"
+import (
+	"errors"
+	"net"
+
+	"ip2country/pkg/store"
+)
 
 type DBStore struct {
 }
@@ -9,6 +14,7 @@ func NewDBStore() *DBStore {
 	return &DBStore{}
 }
 
-func (r *DBStore) GetCountryByIP(ip string) (string, error) {
-	return "", errors.New("not implemented")
+func (r *DBStore) GetInfoByIP(ip net.IP) (*store.SubnetInfo, error) {
+	_ = ip
+	return nil, errors.New("not implemented")
 }
