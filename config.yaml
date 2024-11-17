@@ -11,7 +11,7 @@ logger:
   serviceName: "ip2country"
   serviceVersion: "0.0.1"
 
-activeDataStore: "local"
+ACTIVE_DATA_STORE: "local"
 RATE_LIMIT: 1
 BURST_LIMIT: 1
 port: 8080

@@ -57,6 +57,7 @@ func LoadConfig() (*Config, error) {
 	viper.SetConfigName("config") // name of config file (without extension)
 	viper.SetConfigType("yaml")   // or viper.SetConfigType("YAML")
 	viper.AddConfigPath(".")      // optionally look for config in the working directory
+	viper.AddConfigPath("..")
 	viper.SetDefault(logLevel, defaultLogLevel)
 	viper.SetDefault(serviceName, defaultServiceName)
 	viper.SetDefault(serviceVersion, defaultServiceVersion)
