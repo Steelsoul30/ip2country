@@ -34,19 +34,15 @@ func RateLimitMiddleware(cfg *config.Config, next http.Handler) http.Handler {
 
 		now := time.Now()
 		elapsed := now.Sub(lastTokenTime).Seconds()
-		slog.Info(fmt.Sprintf("Elapsed time: %v", elapsed))
-		slog.Info(fmt.Sprintf("Elapsed time*rate: %v", int(elapsed*float64(cfg.RateLimit))))
 		tokens += int(elapsed * float64(cfg.RateLimit))
-		slog.Info(fmt.Sprintf("Tokens not real: %d", tokens))
 		if tokens > cfg.BurstLimit {
 			tokens = cfg.BurstLimit
 		}
-		slog.Info(fmt.Sprintf("Tokens real: %d", tokens))
 		lastTokenTime = now
 
 		if tokens > 0 {
 			tokens--
-			slog.Info(fmt.Sprintf("Tokens: %d", tokens))
+			slog.Info(fmt.Sprintf("Rate Limiting tokens remaining: %d", tokens))
 			next.ServeHTTP(w, r)
 		} else {
 			WriteError(w, http.StatusTooManyRequests, "Too Many Requests")
