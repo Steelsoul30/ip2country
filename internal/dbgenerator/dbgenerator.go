@@ -176,6 +176,10 @@ func (s *DbGenerator) TryLoadFromGob(filename string) (cidranger.Ranger, error) 
 	if err != nil {
 		return nil, err
 	}
+	info := s.subnetInfo
+	if info == nil {
+		return nil, fmt.Errorf("subnet info is nil")
+	}
 	err = s.BuildCIDRTree()
 	if err != nil {
 		return nil, err

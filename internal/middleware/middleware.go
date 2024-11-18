@@ -19,14 +19,13 @@ var (
 	once          sync.Once
 )
 
-type errorResponse struct {
+type ErrorResponse struct {
 	Error string `json:"error"`
 }
 
 func RateLimitMiddleware(cfg *config.Config, next http.Handler) http.Handler {
 	once.Do(func() {
 		tokens = cfg.BurstLimit
-		slog.Warn("Tokens initialized")
 	})
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		mu.Lock()
@@ -45,6 +44,7 @@ func RateLimitMiddleware(cfg *config.Config, next http.Handler) http.Handler {
 			slog.Info(fmt.Sprintf("Rate Limiting tokens remaining: %d", tokens))
 			next.ServeHTTP(w, r)
 		} else {
+			slog.Warn("Rate Limiting: Too Many Requests")
 			WriteError(w, http.StatusTooManyRequests, "Too Many Requests")
 		}
 	})
@@ -55,7 +55,7 @@ func ErrorHandler(next http.Handler) http.Handler {
 		defer func() {
 			if err := recover(); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
-				json.NewEncoder(w).Encode(errorResponse{Error: "Internal Server Error"})
+				json.NewEncoder(w).Encode(ErrorResponse{Error: "Internal Server Error"})
 			}
 		}()
 		next.ServeHTTP(w, r)
@@ -64,7 +64,7 @@ func ErrorHandler(next http.Handler) http.Handler {
 
 func WriteError(w http.ResponseWriter, statusCode int, errMsg string) {
 	w.WriteHeader(statusCode)
-	json.NewEncoder(w).Encode(errorResponse{Error: errMsg})
+	json.NewEncoder(w).Encode(ErrorResponse{Error: errMsg})
 }
 
 func LoggingMiddleware(next http.Handler) http.Handler {

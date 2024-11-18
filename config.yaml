@@ -15,4 +15,4 @@ ACTIVE_DATA_STORE: "local"
 RATE_LIMIT: 1
 BURST_LIMIT: 1
 port: 8080
-isDebug: false
+isDebug: true
