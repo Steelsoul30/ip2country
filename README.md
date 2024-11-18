@@ -4,12 +4,20 @@
 This is a POC only. Do not use this code in any production environment. This is for educational purposed only.
 
 ## Table of Contents
-
+- [Prerequisites](#prerequisites)
 - [Configuration](#configuration)
 - [Running the Project](#running-the-project)
+- [Usage](#usage)
 - [Project Structure](#project-structure)
 - [TODO](#todo)
 
+
+## Prerequisites
+
+- Go 1.23 or higher
+- Docker (optional, for containerization)
+- A data source for IP information. This can be a local file or an API endpoint. See zip file for an example of a local file.
+ 
 ## Configuration
 
 The configuration for the project is managed through a `config.yaml` file together with environment variables. Capitalized variables can be overriden if set as environment variables
@@ -57,7 +65,7 @@ To run the project, follow these steps:
 1. **Clone the repository:**
 
    ```sh
-   git clone https://github.com/yourusername/ip2country.git
+   git clone https://github.com/steelsoul30/ip2country.git
    cd ip2country
    ```
 
@@ -94,6 +102,12 @@ To run with a local db, a geolite2.zip should be present with the following file
 - GeoLite2-City-Locations-en.csv
 You can use the file already present
 
+## Usage
+Once the service is running, you can make HTTP requests to it to get country information based on IP addresses. For example:
+    
+    ```sh
+    curl http://localhost:8080/ip2country?ip=2.22.233.255
+    ```
    
 ## Project Structure
 - \`cmd/\`: Contained the main commands. Effectively these are the entry points
